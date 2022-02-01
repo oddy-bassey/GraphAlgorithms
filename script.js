@@ -1,12 +1,10 @@
 "use strict";
 
-// Solving Graph problems
+// Solving Graph problems (Has Path)
 
 // Solution: using depth-first-search
 const hasPath1 = (graph, src, dst) => {
   if (src === dst) return true;
-
-  if (!graph[src]) return false;
 
   for (let neighbour of graph[src]) {
     if (hasPath(graph, neighbour, dst) === true) {
