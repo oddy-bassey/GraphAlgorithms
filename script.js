@@ -1,55 +1,93 @@
 "use strict";
 
-// Solving Graph problems (Has Path)
+// Solving Graph problems (Undirected Path)
 
-// Solution: using depth-first-search
-const hasPath1 = (graph, src, dst) => {
+const undirectedPath = (edges, nodeA, nodeB) => {
+  const graph = buildGraph(edges);
+
+  console.log(hasPath(graph, nodeA, nodeB, new Set()));
+};
+
+const buildGraph = (edges) => {
+  const graph = {};
+
+  for (let edge of edges) {
+    const [a, b] = edge;
+
+    if (!(a in graph)) graph[a] = [];
+    if (!(b in graph)) graph[b] = [];
+
+    graph[a].push(b);
+    graph[b].push(a);
+  }
+  return graph;
+};
+
+const hasPath = (graph, src, dst, visitedNodes) => {
   if (src === dst) return true;
 
+  if (visitedNodes.has(src)) return false;
+
+  visitedNodes.add(src);
+
   for (let neighbour of graph[src]) {
-    if (hasPath(graph, neighbour, dst) === true) {
+    if (hasPath(graph, neighbour, dst, visitedNodes) === true) {
       return true;
     }
   }
   return false;
 };
 
-// Solution: using bredth-first-search
-const hasPath = (graph, src, dst) => {
-  const queueData = [src];
+const edges1 = [
+  ["i", "j"],
+  ["k", "i"],
+  ["m", "k"],
+  ["k", "l"],
+  ["o", "n"],
+];
 
-  while (queueData.length > 0) {
-    const currentNode = queueData.shift();
+const edges2 = [
+  ["b", "a"],
+  ["c", "a"],
+  ["b", "c"],
+  ["q", "r"],
+  ["q", "s"],
+  ["q", "u"],
+  ["q", "t"],
+];
 
-    if (currentNode === dst) return true;
+const edges3 = [
+  ["s", "r"],
+  ["t", "q"],
+  ["q", "r"],
+];
 
-    for (let neighbour of graph[currentNode]) {
-      queueData.push(neighbour);
-    }
-  }
+// test_00
+undirectedPath(edges1, "j", "m");
 
-  return false;
-};
+// test_01
+undirectedPath(edges1, "m", "j"); // -> true
 
-const graph1 = {
-  f: ["g", "i"],
-  g: ["h"],
-  h: [],
-  i: ["g", "k"],
-  j: ["i"],
-  k: [],
-};
+// test_02:
+undirectedPath(edges1, "l", "j"); // -> true
 
-const graph2 = {
-  v: ["x", "w"],
-  w: [],
-  x: [],
-  y: ["z"],
-  z: [],
-};
+// test_03:
+undirectedPath(edges1, "k", "o"); // -> false
 
-console.log("test case0 (src: f, dst: k) -> " + hasPath(graph1, "f", "k"));
-console.log("test case0 (src: f, dst: j) -> " + hasPath(graph1, "f", "j"));
-console.log("test case1 (src: i, dst: h) -> " + hasPath(graph1, "i", "h"));
-console.log("test case2 (src: v, dst: w) -> " + hasPath(graph2, "v", "w"));
-console.log("test case3 (src: v, dst: z) -> " + hasPath(graph2, "v", "z"));
+// test_04:
+undirectedPath(edges1, "i", "o"); // -> false
+
+// test_05:
+undirectedPath(edges2, "a", "b"); // -> true
+
+// test_06:
+undirectedPath(edges2, "a", "c"); // -> true
+
+// test_07:
+undirectedPath(edges2, "r", "t"); // -> true
+
+// test_08:
+undirectedPath(edges2, "r", "b"); // -> false
+
+// test_09:
+undirectedPath(edges3, "r", "t"); // -> true
