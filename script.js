@@ -1,93 +1,80 @@
 "use strict";
 
-// Solving Graph problems (Undirected Path)
+// Solving Graph problems (Largest Component)
 
-const undirectedPath = (edges, nodeA, nodeB) => {
-  const graph = buildGraph(edges);
+const largestComponent = (graph) => {
+  const visitedNodes = new Set();
+  let longestComponent = 0;
+  for (let node in graph) {
+    const size = exploreSize(graph, node, visitedNodes);
 
-  console.log(hasPath(graph, nodeA, nodeB, new Set()));
-};
-
-const buildGraph = (edges) => {
-  const graph = {};
-
-  for (let edge of edges) {
-    const [a, b] = edge;
-
-    if (!(a in graph)) graph[a] = [];
-    if (!(b in graph)) graph[b] = [];
-
-    graph[a].push(b);
-    graph[b].push(a);
+    if (size > longestComponent) longestComponent = size;
   }
-  return graph;
+
+  return longestComponent;
 };
 
-const hasPath = (graph, src, dst, visitedNodes) => {
-  if (src === dst) return true;
+const exploreSize = (graph, node, visitedNodes) => {
+  if (visitedNodes.has(Number(node))) return 0;
 
-  if (visitedNodes.has(src)) return false;
+  visitedNodes.add(Number(node));
+  let size = 1;
 
-  visitedNodes.add(src);
-
-  for (let neighbour of graph[src]) {
-    if (hasPath(graph, neighbour, dst, visitedNodes) === true) {
-      return true;
-    }
+  for (let neighbour of graph[node]) {
+    size += exploreSize(graph, neighbour, visitedNodes);
   }
-  return false;
+
+  return size;
 };
 
-const edges1 = [
-  ["i", "j"],
-  ["k", "i"],
-  ["m", "k"],
-  ["k", "l"],
-  ["o", "n"],
-];
+// test_00:
+const graph1 = {
+  0: ["8", "1", "5"],
+  1: ["0"],
+  5: ["0", "8"],
+  8: ["0", "5"],
+  2: ["3", "4"],
+  3: ["2", "4"],
+  4: ["3", "2"],
+};
+console.log(largestComponent(graph1)); // -> 4
 
-const edges2 = [
-  ["b", "a"],
-  ["c", "a"],
-  ["b", "c"],
-  ["q", "r"],
-  ["q", "s"],
-  ["q", "u"],
-  ["q", "t"],
-];
-
-const edges3 = [
-  ["s", "r"],
-  ["t", "q"],
-  ["q", "r"],
-];
-
-// test_00
-undirectedPath(edges1, "j", "m");
-
-// test_01
-undirectedPath(edges1, "m", "j"); // -> true
+// test_01:
+const graph2 = {
+  1: ["2"],
+  2: ["1", "8"],
+  6: ["7"],
+  9: ["8"],
+  7: ["6", "8"],
+  8: ["9", "7", "2"],
+};
+console.log(largestComponent(graph2)); // -> 6
 
 // test_02:
-undirectedPath(edges1, "l", "j"); // -> true
+const graph3 = {
+  3: [],
+  4: ["6"],
+  6: ["4", "5", "7", "8"],
+  8: ["6"],
+  7: ["6"],
+  5: ["6"],
+  1: ["2"],
+  2: ["1"],
+};
+console.log(largestComponent(graph3)); // -> 5
 
-// test_03:
-undirectedPath(edges1, "k", "o"); // -> false
+// test_03://
+console.log(largestComponent({})); // -> 0
 
 // test_04:
-undirectedPath(edges1, "i", "o"); // -> false
-
-// test_05:
-undirectedPath(edges2, "a", "b"); // -> true
-
-// test_06:
-undirectedPath(edges2, "a", "c"); // -> true
-
-// test_07:
-undirectedPath(edges2, "r", "t"); // -> true
-
-// test_08:
-undirectedPath(edges2, "r", "b"); // -> false
-
-// test_09:
-undirectedPath(edges3, "r", "t"); // -> true
+const graph4 = {
+  0: ["4", "7"],
+  1: [],
+  2: [],
+  3: ["6"],
+  4: ["0"],
+  6: ["3"],
+  7: ["0"],
+  8: [],
+};
+console.log(largestComponent(graph4)); // -> 3
