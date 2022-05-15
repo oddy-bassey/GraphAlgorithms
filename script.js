@@ -2,29 +2,29 @@
 
 // Solving Graph problems (Largest Component)
 
-const largestComponent = (graph) => {
+const connectedComponentsCount = (graph) => {
   const visitedNodes = new Set();
-  let longestComponent = 0;
+  let count = 0;
   for (let node in graph) {
-    const size = exploreSize(graph, node, visitedNodes);
 
-    if (size > longestComponent) longestComponent = size;
+    if (explore(graph, node, visitedNodes) == true){
+      count += 1;
+    }
   }
 
-  return longestComponent;
+  return count;
 };
 
-const exploreSize = (graph, node, visitedNodes) => {
+const explore = (graph, node, visitedNodes) => {
   if (visitedNodes.has(Number(node))) return 0;
 
   visitedNodes.add(Number(node));
-  let size = 1;
 
   for (let neighbour of graph[node]) {
-    size += exploreSize(graph, neighbour, visitedNodes);
+    explore(graph, neighbour, visitedNodes);
   }
 
-  return size;
+  return true;
 };
 
 // test_00:
@@ -37,7 +37,7 @@ const graph1 = {
   3: ["2", "4"],
   4: ["3", "2"],
 };
-console.log(largestComponent(graph1)); // -> 4
+console.log(connectedComponentsCount(graph1)); // -> 4
 
 // test_01:
 const graph2 = {
@@ -48,7 +48,7 @@ const graph2 = {
   7: ["6", "8"],
   8: ["9", "7", "2"],
 };
-console.log(largestComponent(graph2)); // -> 6
+console.log(connectedComponentsCount(graph2)); // -> 6
 
 // test_02:
 const graph3 = {
@@ -61,10 +61,10 @@ const graph3 = {
   1: ["2"],
   2: ["1"],
 };
-console.log(largestComponent(graph3)); // -> 5
+console.log(connectedComponentsCount(graph3)); // -> 5
 
 // test_03://
-console.log(largestComponent({})); // -> 0
+console.log(connectedComponentsCount({})); // -> 0
 
 // test_04:
 const graph4 = {
@@ -77,4 +77,4 @@ const graph4 = {
   7: ["0"],
   8: [],
 };
-console.log(largestComponent(graph4)); // -> 3
+console.log(connectedComponentsCount(graph4)); // -> 3
