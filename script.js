@@ -1,6 +1,6 @@
 "use strict";
 
-// Solving Graph problems (Largest Component)
+// Solving Graph problems (number of connected Components || individual components in a given graph)
 
 const connectedComponentsCount = (graph) => {
   const visitedNodes = new Set();
