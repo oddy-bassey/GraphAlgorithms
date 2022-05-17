@@ -1,52 +1,52 @@
 "use strict";
 
-// graph problem (shortest path)
+// graph problem (number of islands)
 
-const shortestPath = (edges, nodeA, nodeB) => {
-  const graph = buildGraph(edges);
-  const visited = new Set([nodeA]);
-  const queue = [ [nodeA , 0] ];
+const islandCount = (grid) => {
 
-  console.log(graph);
+  const visited = new Set();
+  let count = 0;
 
-  while(queue.length > 0){
-    const [node, distance] = queue.shift(); 
-
-    if (node === nodeB) return distance;
-
-    for (let neighbour of graph[node]){
-      if(!visited.has(neighbour)){
-        visited.add(neighbour);
-        queue.push([neighbour, distance+1]);
+  for (let r = 0; r < grid.length; r++) {
+    for (let c = 0; c < grid[0].length; c++) {
+      if(explore(grid, r, c, visited)) {
+        count += 1;
       }
     }
   }
 
-  return -1;
+  return count;
 }
 
-const buildGraph = (edges) => {
-  const graph = {};
+const explore = (grid, row, column, visited) => {
+  // check if in bounds
+  const rowInbounds = 0<=row && row<grid.length;
+  const colummnInbounds = 0<=column && column<grid[0].length;
+  if(!rowInbounds || !colummnInbounds) return false;
+  
+  // check if on water
+  if(grid[row][column] === 'w') return false;
+  
+  // check if visited
+  const pos = row+','+column;
+  if(visited.has(pos)) return false;
+  visited.add(pos);
 
-  for (let edge of edges) {
-    const [a , b] = edge;
-    
-    if(!(a in graph)) graph[a] = [];
-    if(!(b in graph)) graph[b] = [];
+  explore(grid, row-1, column, visited); // go up
+  explore(grid, row+1, column, visited); // go down
+  explore(grid, row, column-1, visited); // go left
+  explore(grid, row, column+1, visited); // go right
 
-    graph[a].push(b);
-    graph[b].push(a);
-  }
-
-  return graph;
+  return true;
 }
 
-const edges = [
-  ['w', 'x'],
-  ['x', 'y'],
-  ['z', 'y'],
-  ['z', 'v'],
-  ['w', 'v']
+const grid = [
+  ['w', 'L', 'w', 'w', 'w'],
+  ['w', 'L', 'w', 'w', 'w'],
+  ['L', 'w', 'w', 'L', 'w'],
+  ['w', 'w', 'L', 'L', 'w'],
+  ['L', 'w', 'w', 'L', 'L'],
+  ['L', 'L', 'w', 'w', 'w']
 ]
 
-console.log(shortestPath(edges, 'w', 'z'));
+console.log(islandCount(grid));
